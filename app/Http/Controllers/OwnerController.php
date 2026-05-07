@@ -11,15 +11,13 @@ class OwnerController extends Controller
     {
         $owners = Owner::all();
         return view('owners.index', compact('owners'));
-
     }
+
     public function show(Owner $owner)
     {
-        $owner->load('cars.owner'); // завантажуємо всі машини цього власника
-
+        $owner->load('cars.owner');
         return view('owners.show', compact('owner'));
     }
-
 
     public function create()
     {
@@ -28,14 +26,42 @@ class OwnerController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'surname' => 'required|string|max:255',
-        ]);
+        $data = $request->validate(
+            [
+                'name' => [
+                    'required',
+                    'string',
+                    'min:2',
+                    'max:50',
+                    'regex:/^[a-zA-Zа-яА-ЯіІїЇєЄ\s\-]+$/u',
+                ],
+                'surname' => [
+                    'required',
+                    'string',
+                    'min:2',
+                    'max:50',
+                    'regex:/^[a-zA-Zа-яА-ЯіІїЇєЄ\s\-]+$/u',
+                ],
+            ],
+            [
+                'name.required' => 'Owner name is required.',
+                'name.string' => 'Owner name must be a string.',
+                'name.min' => 'Owner name must be at least 2 characters.',
+                'name.max' => 'Owner name must not exceed 50 characters.',
+                'name.regex' => 'Owner name contains invalid characters.',
 
-        Owner::create($request->all());
+                'surname.required' => 'Owner surname is required.',
+                'surname.string' => 'Owner surname must be a string.',
+                'surname.min' => 'Owner surname must be at least 2 characters.',
+                'surname.max' => 'Owner surname must not exceed 50 characters.',
+                'surname.regex' => 'Owner surname contains invalid characters.',
+            ]
+        );
 
-        return redirect()->route('owners.index');
+        Owner::create($data);
+
+        return redirect()->route('owners.index')
+            ->with('success', 'Owner created successfully.');
     }
 
     public function edit(Owner $owner)
@@ -45,19 +71,49 @@ class OwnerController extends Controller
 
     public function update(Request $request, Owner $owner)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'surname' => 'required|string|max:255',
-        ]);
+        $data = $request->validate(
+            [
+                'name' => [
+                    'required',
+                    'string',
+                    'min:2',
+                    'max:50',
+                    'regex:/^[a-zA-Zа-яА-ЯіІїЇєЄ\s\-]+$/u',
+                ],
+                'surname' => [
+                    'required',
+                    'string',
+                    'min:2',
+                    'max:50',
+                    'regex:/^[a-zA-Zа-яА-ЯіІїЇєЄ\s\-]+$/u',
+                ],
+            ],
+            [
+                'name.required' => 'Owner name is required.',
+                'name.string' => 'Owner name must be a string.',
+                'name.min' => 'Owner name must be at least 2 characters.',
+                'name.max' => 'Owner name must not exceed 50 characters.',
+                'name.regex' => 'Owner name contains invalid characters.',
 
-        $owner->update($request->all());
+                'surname.required' => 'Owner surname is required.',
+                'surname.string' => 'Owner surname must be a string.',
+                'surname.min' => 'Owner surname must be at least 2 characters.',
+                'surname.max' => 'Owner surname must not exceed 50 characters.',
+                'surname.regex' => 'Owner surname contains invalid characters.',
+            ]
+        );
 
-        return redirect()->route('owners.index');
+        $owner->update($data);
+
+        return redirect()->route('owners.index')
+            ->with('success', 'Owner updated successfully.');
     }
 
     public function destroy(Owner $owner)
     {
         $owner->delete();
-        return redirect()->route('owners.index');
+
+        return redirect()->route('owners.index')
+            ->with('success', 'Owner deleted successfully.');
     }
 }

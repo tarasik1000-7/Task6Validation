@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,11 +11,33 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ url('/') }}">Task3 CRUD-cars</a>
+        <a class="navbar-brand fw-bold" href="{{ route('owners.index') }}">Task3 CRUD-cars</a>
 
-        <div class="ms-auto d-flex gap-2">
-            <a class="btn btn-outline-light" href="{{ route('owners.index') }}">Owners</a>
-            <a class="btn btn-outline-light" href="{{ route('cars.index') }}">Cars</a>
+        <div class="ms-auto d-flex align-items-center gap-2">
+            <a href="{{ route('lang.switch', 'en') }}" class="btn btn-sm btn-outline-light">EN</a>
+            <a href="{{ route('lang.switch', 'it') }}" class="btn btn-sm btn-outline-light">IT</a>
+
+            @auth
+                <a class="btn btn-outline-light" href="{{ route('owners.index') }}">
+                    {{ __('messages.owners') }}
+                </a>
+
+                <a class="btn btn-outline-light" href="{{ route('cars.index') }}">
+                    {{ __('messages.cars') }}
+                </a>
+
+                <span class="text-white ms-3">{{ auth()->user()->name }}</span>
+
+                <form method="POST" action="{{ route('logout') }}" class="ms-2">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-warning btn-sm">
+                        {{ __('messages.logout') }}
+                    </button>
+                </form>
+            @else
+                <a class="btn btn-outline-light" href="{{ route('login') }}">{{ __('messages.login') }}</a>
+                <a class="btn btn-outline-light" href="{{ route('register') }}">{{ __('messages.register') }}</a>
+            @endauth
         </div>
     </div>
 </nav>

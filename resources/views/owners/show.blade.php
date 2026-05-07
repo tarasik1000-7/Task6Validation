@@ -5,27 +5,29 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h2 class="mb-1">{{ $owner->name }} {{ $owner->surname }}</h2>
-                <div class="text-muted">Owner ID: {{ $owner->id }}</div>
+                <div class="text-muted">{{ __('messages.owner_id') }}: {{ $owner->id }}</div>
             </div>
 
             <div class="d-flex gap-2">
-                <a href="{{ route('cars.create') }}" class="btn btn-outline-primary">
-                    Add Car
-                </a>
-
-                <a href="{{ route('owners.edit', $owner) }}" class="btn btn-warning">
-                    Edit
-                </a>
-
                 <a href="{{ route('owners.index') }}" class="btn btn-outline-dark">
-                    Back
+                    {{ __('messages.back') }}
                 </a>
+
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('owners.edit', $owner) }}" class="btn btn-warning">
+                        {{ __('messages.edit') }}
+                    </a>
+
+                    <a href="{{ route('cars.create') }}" class="btn btn-primary">
+                        {{ __('messages.add_car') }}
+                    </a>
+                @endif
             </div>
         </div>
 
         <div class="card shadow-sm">
             <div class="card-header fw-semibold">
-                Cars of this owner
+                {{ __('messages.cars_of_owner') }}
             </div>
 
             <div class="table-responsive">
@@ -33,10 +35,10 @@
                     <thead class="table-dark">
                     <tr>
                         <th>ID</th>
-                        <th>Reg #</th>
-                        <th>Brand</th>
-                        <th>Model</th>
-                        <th>Owner</th>
+                        <th>{{ __('messages.reg_number') }}</th>
+                        <th>{{ __('messages.brand') }}</th>
+                        <th>{{ __('messages.model') }}</th>
+                        <th>{{ __('messages.owner') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -51,7 +53,7 @@
                     @empty
                         <tr>
                             <td colspan="5" class="text-center">
-                                No cars
+                                {{ __('messages.no_cars_found') }}
                             </td>
                         </tr>
                     @endforelse
@@ -60,16 +62,18 @@
             </div>
         </div>
 
-        <div class="mt-3">
-            <form action="{{ route('owners.destroy', $owner) }}" method="POST">
-                @csrf
-                @method('DELETE')
+        @if(auth()->user()->role === 'admin')
+            <div class="mt-3">
+                <form action="{{ route('owners.destroy', $owner) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
 
-                <button class="btn btn-danger"
-                        onclick="return confirm('Delete this owner?')">
-                    Delete owner
-                </button>
-            </form>
-        </div>
+                    <button class="btn btn-danger"
+                            onclick="return confirm('Delete this owner?')">
+                        {{ __('messages.delete_owner') }}
+                    </button>
+                </form>
+            </div>
+        @endif
     </div>
 @endsection

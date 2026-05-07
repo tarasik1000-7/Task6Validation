@@ -16,6 +16,16 @@
             </div>
         </div>
 
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="card shadow-sm">
             <div class="card-body">
                 <form action="{{ route('owners.update', $owner) }}" method="POST" class="row g-3">
@@ -30,7 +40,7 @@
                                class="form-control @error('name') is-invalid @enderror">
 
                         @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -42,7 +52,7 @@
                                class="form-control @error('surname') is-invalid @enderror">
 
                         @error('surname')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -59,7 +69,6 @@
             </div>
         </div>
 
-        {{-- Optional: quick actions --}}
         <div class="mt-3 d-flex gap-2">
             <form action="{{ route('owners.destroy', $owner) }}" method="POST">
                 @csrf

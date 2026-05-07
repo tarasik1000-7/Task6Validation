@@ -10,6 +10,16 @@
             </a>
         </div>
 
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="card shadow-sm">
             <div class="card-body">
                 <form action="{{ route('owners.store') }}" method="POST" class="row g-3">
@@ -24,7 +34,7 @@
                                placeholder="Enter name">
 
                         @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -37,7 +47,7 @@
                                placeholder="Enter surname">
 
                         @error('surname')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 

@@ -1,59 +1,83 @@
 @extends('layouts.app')
-@section('title', 'Cars')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="h3 mb-0">Cars</h1>
-        <a class="btn btn-primary" href="{{ route('cars.create') }}">Add Car</a>
-    </div>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>{{ __('messages.cars') }}</h2>
 
-    <div class="card shadow-sm">
-        <div class="table-responsive">
-            <table class="table table-striped mb-0 align-middle">
-                <thead class="table-dark">
+            <div class="d-flex gap-2">
+                <a href="{{ route('owners.index') }}" class="btn btn-outline-dark">
+                    {{ __('messages.owners') }}
+                </a>
+
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('cars.create') }}" class="btn btn-primary">
+                        {{ __('messages.add_car') }}
+                    </a>
+                @endif
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>{{ __('messages.reg_number') }}</th>
+                <th>{{ __('messages.brand') }}</th>
+                <th>{{ __('messages.model') }}</th>
+                <th>{{ __('messages.owner') }}</th>
+                <th width="220">{{ __('messages.actions') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            @forelse($cars as $car)
                 <tr>
-                    <th>ID</th>
-                    <th>Reg #</th>
-                    <th>Brand</th>
-                    <th>Model</th>
-                    <th>Owner</th>
-                    <th class="text-end">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                @forelse($cars as $car)
-                    <tr>
-                        <td>{{ $car->id }}</td>
-                        <td class="fw-semibold">{{ $car->reg_number }}</td>
-                        <td>{{ $car->brand }}</td>
-                        <td>{{ $car->model }}</td>
-                        <td>
-                            @if($car->owner)
-                                <a href="{{ route('owners.show', $car->owner) }}" class="text-decoration-none">
-                                    {{ $car->owner->name }} {{ $car->owner->surname }}
-                                </a>
-                            @else
-                                —
-                            @endif
-                        </td>
-                        <td class="text-end">
-                            <a class="btn btn-sm btn-warning" href="{{ route('cars.edit', $car) }}">Edit</a>
-                            <form action="{{ route('cars.destroy', $car) }}" method="POST" class="d-inline">
+                    <td>{{ $car->id }}</td>
+                    <td><strong>{{ $car->reg_number }}</strong></td>
+                    <td>{{ $car->brand }}</td>
+                    <td>{{ $car->model }}</td>
+                    <td>
+                        @if($car->owner)
+                            <a href="{{ route('owners.show', $car->owner) }}" class="text-decoration-none">
+                                {{ $car->owner->name }} {{ $car->owner->surname }}
+                            </a>
+                        @else
+                            —
+                        @endif
+                    </td>
+                    <td>
+                        <a href="{{ route('cars.show', $car) }}" class="btn btn-sm btn-primary">
+                            {{ __('messages.view') }}
+                        </a>
+
+                        @if(auth()->user()->role === 'admin')
+                            <a href="{{ route('cars.edit', $car) }}" class="btn btn-sm btn-warning">
+                                {{ __('messages.edit') }}
+                            </a>
+
+                            <form action="{{ route('cars.destroy', $car) }}"
+                                  method="POST"
+                                  style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this car?')">Delete</button>
+                                <button class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Delete this car?')">
+                                    {{ __('messages.delete') }}
+                                </button>
                             </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="6" class="text-center py-4">No cars</td></tr>
-                @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
+                        @endif
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="text-center">{{ __('messages.no_cars_found') }}</td>
+                </tr>
+            @endforelse
+            </tbody>
+        </table>
 
-    <div class="mt-3">
-        {{ $cars->links() }}
+        <div class="mt-3">
+            {{ $cars->links() }}
+        </div>
     </div>
 @endsection
