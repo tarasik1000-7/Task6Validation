@@ -79,8 +79,10 @@ public function isAdmin(): bool
     return $this->role === 'admin';
 }
 
-
-
+public function owners()
+{
+    return $this->hasMany(Owner::class);
+}
 
 
 }

@@ -56,6 +56,28 @@
                         @enderror
                     </div>
 
+                    @if(auth()->user()->isAdmin())
+                        <div class="col-md-6">
+                            <label class="form-label">Insurance Agent</label>
+
+                            <select name="user_id"
+                                    class="form-select @error('user_id') is-invalid @enderror">
+                                <option value="">Select insurance agent</option>
+
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}"
+                                        {{ old('user_id', $owner->user_id) == $user->id ? 'selected' : '' }}>
+                                        {{ $user->name }} - {{ $user->email }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            @error('user_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @endif
+
                     <div class="col-12 d-flex gap-2">
                         <button type="submit" class="btn btn-primary">
                             Update
@@ -69,15 +91,18 @@
             </div>
         </div>
 
-        <div class="mt-3 d-flex gap-2">
-            <form action="{{ route('owners.destroy', $owner) }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <button class="btn btn-danger"
-                        onclick="return confirm('Delete this owner?')">
-                    Delete owner
-                </button>
-            </form>
-        </div>
+        @if(auth()->user()->isAdmin() || auth()->id() === $owner->user_id)
+            <div class="mt-3 d-flex gap-2">
+                <form action="{{ route('owners.destroy', $owner) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+
+                    <button class="btn btn-danger"
+                            onclick="return confirm('Delete this owner?')">
+                        Delete owner
+                    </button>
+                </form>
+            </div>
+        @endif
     </div>
 @endsection

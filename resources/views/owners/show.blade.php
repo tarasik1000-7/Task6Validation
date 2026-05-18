@@ -4,76 +4,76 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <h2 class="mb-1">{{ $owner->name }} {{ $owner->surname }}</h2>
-                <div class="text-muted">{{ __('messages.owner_id') }}: {{ $owner->id }}</div>
-            </div>
+                <h1>{{ $owner->name }} {{ $owner->surname }}</h1>
+                <p class="text-muted mb-0">Owner ID: {{ $owner->id }}</p>
 
-            <div class="d-flex gap-2">
-                <a href="{{ route('owners.index') }}" class="btn btn-outline-dark">
-                    {{ __('messages.back') }}
-                </a>
-
-                @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('owners.edit', $owner) }}" class="btn btn-warning">
-                        {{ __('messages.edit') }}
-                    </a>
-
-                    <a href="{{ route('cars.create') }}" class="btn btn-primary">
-                        {{ __('messages.add_car') }}
-                    </a>
+                @if($owner->user)
+                    <p class="text-muted mb-0">
+                        Insurance Agent: {{ $owner->user->name }} - {{ $owner->user->email }}
+                    </p>
                 @endif
             </div>
+
+            <a href="{{ route('owners.index') }}" class="btn btn-outline-dark">
+                Back
+            </a>
         </div>
 
         <div class="card shadow-sm">
-            <div class="card-header fw-semibold">
-                {{ __('messages.cars_of_owner') }}
+            <div class="card-header">
+                Cars of this owner
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped mb-0 align-middle">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>{{ __('messages.reg_number') }}</th>
-                        <th>{{ __('messages.brand') }}</th>
-                        <th>{{ __('messages.model') }}</th>
-                        <th>{{ __('messages.owner') }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @forelse($owner->cars as $car)
-                        <tr>
-                            <td>{{ $car->id }}</td>
-                            <td><strong>{{ $car->reg_number }}</strong></td>
-                            <td>{{ $car->brand }}</td>
-                            <td>{{ $car->model }}</td>
-                            <td>{{ $car->owner?->name }} {{ $car->owner?->surname }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">
-                                {{ __('messages.no_cars_found') }}
-                            </td>
-                        </tr>
-                    @endforelse
-                    </tbody>
-                </table>
+            <div class="card-body p-0">
+                @if($owner->cars->count())
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover mb-0 align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Reg #</th>
+                                    <th>Brand</th>
+                                    <th>Model</th>
+                                    <th>Owner</th>
+                                    <th>Photos</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach($owner->cars as $car)
+                                    <tr>
+                                        <td>{{ $car->id }}</td>
+                                        <td>
+                                            <strong>{{ $car->reg_number }}</strong>
+                                        </td>
+                                        <td>{{ $car->brand }}</td>
+                                        <td>{{ $car->model }}</td>
+                                        <td>{{ $owner->name }} {{ $owner->surname }}</td>
+
+                                        <td>
+                                            @if($car->photos->count())
+                                                <div class="d-flex gap-2 flex-wrap">
+                                                    @foreach($car->photos as $photo)
+                                                        <img src="{{ asset('storage/' . $photo->path) }}"
+                                                             alt="Car photo"
+                                                             style="width: 90px; height: 60px; object-fit: cover; border-radius: 6px;">
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <span class="text-muted">No photos</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="p-3">
+                        <span class="text-muted">This owner has no cars yet.</span>
+                    </div>
+                @endif
             </div>
         </div>
-
-        @if(auth()->user()->role === 'admin')
-            <div class="mt-3">
-                <form action="{{ route('owners.destroy', $owner) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-
-                    <button class="btn btn-danger"
-                            onclick="return confirm('Delete this owner?')">
-                        {{ __('messages.delete_owner') }}
-                    </button>
-                </form>
-            </div>
-        @endif
     </div>
 @endsection
